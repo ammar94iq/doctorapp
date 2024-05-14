@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'edit_profile.dart';
 import 'home.dart';
-import 'my_thinking.dart';
-import 'select_doctor.dart';
 
 class Profile extends StatelessWidget {
   const Profile({super.key});
@@ -51,30 +49,14 @@ class Profile extends StatelessWidget {
           title: const Text('Edit profile'),
         ),
         ListTile(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: ((context) {
-                  return const SelectDoctor();
-                }),
-              ),
-            );
-          },
+          onTap: () {},
           leading: const Icon(Icons.comment_bank),
-          title: const Text("Choose A Doctor"),
+          title: const Text("Doctor's comments"),
         ),
         ListTile(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: ((context) {
-                  return const MyThinking();
-                }),
-              ),
-            );
-          },
+          onTap: () {},
           leading: const Icon(Icons.note_alt_rounded),
-          title: const Text('My Thoughts And Thinking'),
+          title: const Text('Reports'),
         ),
         const SizedBox(height: 20.0),
         TextButton.icon(
