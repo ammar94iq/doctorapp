@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'api/auth_provider.dart';
 import 'my_thinking.dart';
 
 class Diary extends StatelessWidget {
@@ -7,6 +9,7 @@ class Diary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var model = Provider.of<AuthProvider>(context);
     return Container(
       padding: EdgeInsets.all(15.0),
       child: ListView(
@@ -20,6 +23,25 @@ class Diary extends StatelessWidget {
                   fontWeight: FontWeight.bold),
             ),
           ),
+          SizedBox(height: 10.0),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.indigo, foregroundColor: Colors.white),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: ((context) {
+                    return const MyThinking();
+                  }),
+                ),
+              );
+            },
+            child: Text(
+              'New diary',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
+          ),
+          SizedBox(height: 10.0),
           Image.asset("images/logo.png", height: 100.0),
           TextFormField(
             decoration: InputDecoration(
@@ -51,34 +73,35 @@ class Diary extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Card(
-            color: Color.fromARGB(255, 191, 199, 241).withOpacity(0.5),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: ((context) {
-                            return const MyThinking();
-                          }),
+          Container(
+            height: 500,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: model.diaries.length,
+              itemBuilder: (context, index) {
+                //return Text(model.diaries[index]['title']);
+
+                return Card(
+                  color: Color.fromARGB(255, 191, 199, 241).withOpacity(0.5),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          model.diaries[index]['title'],
+                          style: TextStyle(
+                              fontSize: 18.0, fontWeight: FontWeight.bold),
                         ),
-                      );
-                    },
-                    child: Text(
-                      'My thoughts and thinking',
-                      style: TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.bold),
+                        SizedBox(height: 5.0),
+                        Text(
+                          model.diaries[index]['content'],
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(height: 5.0),
-                  Text(
-                      'I have major challenges today in dealing with personal and work stress. I will look for the necccssary support and will speak with the doctor at the next session to discuss how to overcome these challenges'),
-                ],
-              ),
+                );
+              },
             ),
           ),
           Text(

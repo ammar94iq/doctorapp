@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'api/auth_provider.dart';
 
 class MyThinking extends StatelessWidget {
   const MyThinking({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var model = Provider.of<AuthProvider>(context);
+
+    void showError(String message) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.indigo,
       appBar: AppBar(),
-      body: const Padding(
+      body: Padding(
         padding: EdgeInsets.all(15.0),
         child: Column(
           children: [
@@ -20,12 +31,59 @@ class MyThinking extends StatelessWidget {
                   color: Colors.white),
             ),
             SizedBox(height: 10.0),
-            Text(
-              textAlign: TextAlign.center,
-              "I have major challenges today in dealing with personal and work stress.I will look for the necessary support and will speak with the doctor at the next session to discuss how to overcome these challenges",
-              style: TextStyle(color: Colors.white),
+            TextFormField(
+              controller: model.title,
+              textInputAction: TextInputAction.next,
+              decoration: const InputDecoration(
+                hintText: 'Title',
+                fillColor: Colors.white,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.indigo,
+                    width: 5.0,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10.0),
+                  ),
+                ),
+              ),
             ),
             SizedBox(height: 10.0),
+            TextFormField(
+              controller: model.content,
+              textInputAction: TextInputAction.next,
+              minLines: 1,
+              maxLines: 5,
+              decoration: const InputDecoration(
+                hintText: 'Content',
+                fillColor: Colors.white,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.indigo,
+                    width: 5.0,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10.0),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 10.0),
+            ElevatedButton(
+              onPressed: () async {
+                await model.addDiary();
+                if (model.resultMessage == 'success') {
+                  showError('Added successfully');
+                } else if (model.resultMessage == 'failed') {
+                  showError('failed');
+                } else {
+                  showError('fill all fields');
+                }
+              },
+              child: Text("Save"),
+            ),
             Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'api/auth_provider.dart';
 import 'forgot_password.dart';
 import 'patients_note.dart';
 
@@ -8,6 +10,24 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var model = Provider.of<AuthProvider>(context);
+    void redirect() {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: ((context) {
+            return const PatientNotes();
+          }),
+        ),
+        (route) => false,
+      );
+    }
+
+    void showError(String message) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(),
       body: Container(
@@ -24,6 +44,7 @@ class Login extends StatelessWidget {
             ),
             const SizedBox(height: 30.0),
             TextFormField(
+              controller: model.email,
               decoration: const InputDecoration(
                 hintText: 'Phone or Email',
                 border: OutlineInputBorder(
@@ -35,6 +56,7 @@ class Login extends StatelessWidget {
             ),
             const SizedBox(height: 30.0),
             TextFormField(
+              controller: model.password,
               decoration: const InputDecoration(
                 hintText: 'Password',
                 border: OutlineInputBorder(
@@ -50,15 +72,15 @@ class Login extends StatelessWidget {
             ),
             const SizedBox(height: 60.0),
             InkWell(
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: ((context) {
-                      return const PatientNotes();
-                    }),
-                  ),
-                  (route) => false,
-                );
+              onTap: () async {
+                await model.logIn();
+                if (model.resultMessage == 'success') {
+                  redirect();
+                } else if (model.resultMessage == 'failed') {
+                  showError('Login failure');
+                } else {
+                  showError('fill all fields');
+                }
               },
               child: Container(
                 padding: const EdgeInsets.all(10.0),

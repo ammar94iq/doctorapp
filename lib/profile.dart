@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'edit_profile.dart';
 import 'home.dart';
+import 'main.dart';
 
 class Profile extends StatelessWidget {
   const Profile({super.key});
@@ -64,6 +65,7 @@ class Profile extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: ((context) {
+                  sharedPre.clear();
                   return const Home();
                 }),
               ),

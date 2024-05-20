@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'api/auth_provider.dart';
 import 'login.dart';
 
 class Register extends StatelessWidget {
@@ -7,6 +9,21 @@ class Register extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var model = Provider.of<AuthProvider>(context);
+    void redirect() {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const Login(),
+        ),
+      );
+    }
+
+    void showError(String message) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(),
@@ -30,6 +47,7 @@ class Register extends StatelessWidget {
               ),
               const SizedBox(height: 5.0),
               TextFormField(
+                controller: model.firstName,
                 decoration: const InputDecoration(
                   hintText: 'Your Name',
                   border: OutlineInputBorder(
@@ -46,6 +64,7 @@ class Register extends StatelessWidget {
               ),
               const SizedBox(height: 5.0),
               TextFormField(
+                controller: model.lastName,
                 decoration: const InputDecoration(
                   hintText: 'Your Name',
                   border: OutlineInputBorder(
@@ -62,6 +81,7 @@ class Register extends StatelessWidget {
               ),
               const SizedBox(height: 5.0),
               TextFormField(
+                controller: model.phone,
                 decoration: const InputDecoration(
                   hintText: 'Your Phone',
                   border: OutlineInputBorder(
@@ -78,6 +98,7 @@ class Register extends StatelessWidget {
               ),
               const SizedBox(height: 5.0),
               TextFormField(
+                controller: model.email,
                 decoration: const InputDecoration(
                   hintText: 'Your Email',
                   border: OutlineInputBorder(
@@ -94,6 +115,7 @@ class Register extends StatelessWidget {
               ),
               const SizedBox(height: 5.0),
               TextFormField(
+                controller: model.password,
                 decoration: const InputDecoration(
                   hintText: 'Your Password',
                   border: OutlineInputBorder(
@@ -110,6 +132,7 @@ class Register extends StatelessWidget {
               ),
               const SizedBox(height: 5.0),
               TextFormField(
+                controller: model.passwordConfirm,
                 decoration: const InputDecoration(
                   hintText: 'Your Password',
                   border: OutlineInputBorder(
@@ -121,14 +144,20 @@ class Register extends StatelessWidget {
               ),
               const SizedBox(height: 60.0),
               InkWell(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: ((context) {
-                        return const Login();
-                      }),
-                    ),
-                  );
+                onTap: () async {
+                  await model.register();
+                  if (model.resultMessage == 'success') {
+                    redirect();
+                  } else if (model.resultMessage == 'find') {
+                    showError(
+                        'There is an account with this email, please choose another email');
+                  } else if (model.resultMessage == 'failed') {
+                    showError('Account set-up failure');
+                  } else if (model.resultMessage == 'not match') {
+                    showError('Please check that the passwords match');
+                  } else {
+                    showError('fill all fields');
+                  }
                 },
                 child: Container(
                   padding: const EdgeInsets.all(10.0),

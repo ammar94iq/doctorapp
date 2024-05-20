@@ -1,10 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'api/auth_provider.dart';
 import 'home.dart';
+import 'patients_note.dart';
 
-void main() {
+late SharedPreferences sharedPre;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  sharedPre = await SharedPreferences.getInstance();
   runApp(const MyApp());
 }
 
@@ -14,16 +21,21 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(fontFamily: 'Rubik-Regular'),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+          textTheme: const TextTheme(
+            bodyMedium: TextStyle(fontFamily: 'Rubik-Regular'),
+          ),
         ),
+        home: const SplashScreen(),
       ),
-      home: const SplashScreen(),
     );
   }
 }
@@ -42,7 +54,10 @@ class _SplashScreenState extends State<SplashScreen> {
       // After 3 seconds, navigate to Page2
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const Home()),
+        MaterialPageRoute(
+            builder: (context) => sharedPre.getString("userId") != null
+                ? PatientNotes()
+                : const Home()),
       );
     });
     super.initState();
